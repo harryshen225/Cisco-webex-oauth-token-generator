@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webex Integration</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" type="text/css" href="./style.css"> -->
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Webex Integration Token Generator</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">Protocol Flow<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/flowsteps">Flow Step-through</a>
+        </li>
+      </ul>
+    </div> -->
+  </nav>
+  <div class="container mt-3">
+    <div class="card">
+      <div class="card-title mt-3 ml-3">
+        <h4>Input Parameters</h4>
+      </div>
+      <div class="card-body">
+        <form id="parameters-form">
+          <div class="form-row">
+            <div class="form-group  col-md-6">
+              <label for="client-id">Client ID</label>
+              <input type="text" class="form-control" id="client-id" name="id" required>
+            </div>
+            <div class="form-group  col-md-6">
+              <label for="client-secret">Client Secret</label>
+              <input type="password" class="form-control" id="client-secret" name="secret" required>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="scope">Scope</label>
+              <select multiple class="form-control" id="scope" required name="scope">
+                <option value="spark-admin:hybrid_connectors_read">spark-admin:hybrid_connectors_read</option>
+                <option value="spark:people_read">spark:people_read</option>
+              </select>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="Redirect URI">Redirect URI</label>
+              <input type="text" class="form-control" id="redirect-uri" name="redirectUri" required>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="remember-settings">
+              <label for="remember-settings" class="form-check-label">Remember Settings</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">Start Flow</button>
+          <button type="button" class="btn btn-danger mt-3" id="clear-settings">Clear Settings</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <% if (isStarted) {%>
+  <div class="container mt-3">
+    <div class="card">
+      <div class="card-title mt-3 ml-3">
+        <h3>Step 1. Obtain Access Code <span class="badge badge-pill badge-success">Success</span></h3>
+      </div>
+      <div class="card-body">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Access Code</span>
+          </div>
+          <textarea type="textarea" class="form-control" disabled row="4"><%=  accessCode %></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="container mt-3">
+    <div class="card">
+      <div class="card-title mt-3 ml-3">
+        <div class="row">
+           <div class="col-sm-10">
+            <h3>Step 2. Obtain Access Token and Refresh Token <span class="badge badge-pill badge-success">Success</span>
+            </h3>
+           </div>
+           <div class="col-sm-2">
+             <a class="btn btn-info" href="/refreshtokens" id="refresh-tokens">Refresh Tokens</a>
+           </div>
+        </div>
+       
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">
+                  Access Token Details:
+                </h5>
+
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Access Token</span>
+                  </div>
+                  <textarea type="textarea" class="form-control" id="access-token" disabled
+                    row="4"><%=  accessToken %></textarea>
+                  <div class="input-group-append">
+                    <button class="btn btn-light btn-copy" data-toggle="tooltip" data-placement="top"
+                      title="copy to clipboard" id="btn-access-token">
+                      <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        version="1.1" width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                          d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="input-group mt-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Expires in</span>
+                  </div>
+                  <input type="text" class="form-control" id="access-token-expiry" disabled value=<%=  accessTokenExpiresIn %>>
+                  <div class="input-group-append">
+                    <button class="btn btn-light btn-copy" data-toggle="tooltip" data-placement="top"
+                      title="copy to clipboard" id="btn-access-token-expiry">
+                      <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        version="1.1" width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                          d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- //refresh token -->
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">
+                  Refresh Token Details:
+                </h5>
+
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Refresh Token</span>
+                  </div>
+                  <textarea type="textarea" class="form-control" id="refresh-token" disabled
+                    row="4"><%=  refreshToken %></textarea>
+                  <div class="input-group-append">
+                    <button class="btn btn-light btn-copy" data-toggle="tooltip" data-placement="top"
+                      title="copy to clipboard" id="btn-refresh-token">
+                      <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        version="1.1" width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                          d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="input-group mt-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Expires in</span>
+                  </div>
+                  <input type="text" class="form-control" id="refresh-token-expiry" disabled value=<%=  refreshTokenExpiresIn %>>
+                  <div class="input-group-append">
+                    <button class="btn btn-light btn-copy" data-toggle="tooltip" data-placement="top"
+                      title="copy to clipboard" id="btn-refresh-token-expiry">
+                      <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        version="1.1" width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                          d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+  <% } %>
+
+
+</body>
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="index.js"></script>
+
+</html>
